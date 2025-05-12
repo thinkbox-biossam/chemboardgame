@@ -1,0 +1,559 @@
+/* 기본 스타일 */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f5f5;
+    color: #333;
+    line-height: 1.6;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h1 {
+    color: #3730a3;
+    font-size: 2.5rem;
+    margin-bottom: 10px;
+}
+
+h2 {
+    color: #4f46e5;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+}
+
+/* 주기율표 스타일 추가 및 수정 */
+.periodic-table-container {
+    width: 100%;
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.periodic-table-grid {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(35px, 1fr));
+    grid-template-rows: repeat(9, minmax(35px, auto));
+    gap: 2px;
+    margin: 0 auto;
+}
+
+.element-cell {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 2px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: all 0.2s;
+    aspect-ratio: 1/1;
+}
+
+.element-cell:hover {
+    transform: scale(1.05);
+    z-index: 10;
+    box-shadow: 0 0 0 2px rgba(79, 70, 229, 0.4);
+}
+
+.empty-cell {
+    background-color: transparent;
+}
+
+.atomic-number {
+    position: absolute;
+    top: 2px;
+    left: 3px;
+    font-size: 0.6rem;
+    color: rgba(0, 0, 0, 0.6);
+}
+
+.element-symbol {
+    font-weight: bold;
+    font-size: 0.9rem;
+}
+
+.cube-container {
+    display: flex;
+    justify-content: center;
+    gap: 2px;
+    margin-top: 2px;
+}
+
+.player-cube {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+/* 원소 타입별 배경색 */
+.element-type-alkali-metal { background-color: #ffcc80; }
+.element-type-alkaline-earth-metal { background-color: #ffe0b2; }
+.element-type-transition-metal { background-color: #d7ccc8; }
+.element-type-post-transition-metal { background-color: #c5e1a5; }
+.element-type-metalloid { background-color: #c8e6c9; }
+.element-type-nonmetal { background-color: #b3e5fc; }
+.element-type-noble-gas { background-color: #d1c4e9; }
+.element-type-lanthanide { background-color: #f8bbd0; }
+.element-type-actinide { background-color: #ffcdd2; }
+.element-type-halogen { background-color: #b2ebf2; }
+
+/* 플레이어 영역 스타일 */
+.player-card {
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: all 0.3s;
+}
+
+.player-header {
+    padding: 10px 15px;
+    font-weight: bold;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.player-content {
+    padding: 10px 15px 15px;
+}
+
+.player-dice {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+
+.player-elements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 8px;
+}
+
+.player-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 12px;
+}
+
+/* 턴 표시 */
+.active-player {
+    box-shadow: 0 0 0 2px #4f46e5, 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+/* 주사위 스타일 */
+.dice {
+    width: 40px;
+    height: 40px;
+    border-radius: 6px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 1.2rem;
+    cursor: pointer;
+    transition: all 0.2s;
+    position: relative;
+}
+
+.dice:hover {
+    transform: translateY(-3px);
+}
+
+.dice.selected {
+    border: 2px solid #4f46e5;
+}
+
+.dice.d4 { background-color: #ede7f6; }
+.dice.d6 { background-color: #e3f2fd; }
+.dice.d8 { background-color: #e1f5fe; }
+.dice.d10 { background-color: #e0f7fa; }
+.dice.d12 { background-color: #e0f2f1; }
+.dice.d20 { background-color: #e8f5e9; }
+.dice.d100 { background-color: #f1f8e9; }
+
+.dice-type {
+    position: absolute;
+    top: -3px;
+    right: -3px;
+    font-size: 0.6rem;
+    background-color: #4f46e5;
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* 원소 큐브 스타일 */
+.element-cube {
+    width: 24px;
+    height: 24px;
+    border-radius: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    font-size: 0.8rem;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+/* 화합물 카드 스타일 */
+.compound-card {
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 150px;
+    height: 200px;
+    position: relative;
+    background-color: white;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.compound-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+}
+
+.compound-header {
+    padding: 10px;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.basic-compound .compound-header {
+    background-color: #e3f2fd;
+    color: #1e40af;
+}
+
+.advanced-compound .compound-header {
+    background-color: #f3e8ff;
+    color: #7e22ce;
+}
+
+.compound-content {
+    padding: 10px;
+}
+
+.compound-formula {
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    margin-bottom: 8px;
+}
+
+.compound-elements {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.compound-points {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    background-color: #f3f4f6;
+    border-radius: 999px;
+    padding: 5px 10px;
+    font-weight: bold;
+}
+
+/* 게임 메시지 */
+.game-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    padding: 10px 20px;
+    background-color: #4f46e5;
+    color: white;
+    border-radius: 999px;
+    font-weight: bold;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s;
+    pointer-events: none;
+}
+
+.game-message.visible {
+    opacity: 1;
+}
+
+/* 반응형 디자인 */
+@media (max-width: 768px) {
+    .periodic-table-container {
+        grid-template-columns: repeat(9, 1fr);
+    }
+    
+    .element {
+        font-size: 0.6rem;
+    }
+    
+    .element-symbol {
+        font-size: 0.8rem;
+    }
+    
+    .compound-card {
+        width: 130px;
+        height: 180px;
+    }
+}
+
+/* 게임 컨트롤 영역 */
+.game-controls {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.player-area {
+    width: 30%;
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.game-actions {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+}
+
+.btn {
+    background-color: #4f46e5;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background-color: #3730a3;
+}
+
+.btn:disabled {
+    background-color: #9ca3af;
+    cursor: not-allowed;
+}
+
+#turn-display {
+    margin-top: 10px;
+    font-weight: bold;
+    color: #4f46e5;
+}
+
+/* 마켓 영역 */
+.market-area {
+    background-color: white;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.market-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+
+/* 화합물 카드 모달 스타일 */
+.element-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    border-radius: 4px;
+    text-align: center;
+    font-weight: 500;
+}
+
+/* 메시지 박스 스타일 */
+#message-box-overlay {
+    transition: opacity 0.3s;
+}
+
+#message-box-container {
+    transition: transform 0.3s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} 
+
+/* styles.css 파일에 추가 */
+
+/* 시장 및 덱 영역 스타일 */
+#market-area {
+    /* background-color: #f9fafb; /* gray-50 */
+    /* border: 1px solid #e5e7eb; /* gray-200 */
+}
+
+.deck-and-top-card-section {
+    /* background-color: #ffffff; */ /* 흰색 배경 */
+    /* padding: 1rem; */
+    /* border-radius: 0.5rem; */ /* 8px */
+    /* box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); */
+}
+
+/* 개별 덱 표시 영역 (ui-handlers.js에서 동적으로 생성되는 .deck-display-wrapper에 적용될 수 있음) */
+.deck-display-wrapper {
+    /* border: 1px solid #d1d5db; /* gray-300 */
+    /* padding: 0.75rem; */ /* 12px */
+    /* border-radius: 0.375rem; */ /* 6px */
+}
+
+/* 덱 더미 스타일 */
+.deck-pile {
+    position: relative;
+    width: 100px; /* 덱 너비 */
+    height: 140px; /* 덱 높이 */
+    cursor: default; /* 기본적으로 클릭 불가 암시 */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    perspective: 1000px; /* 3D 효과를 위한 원근감 */
+}
+
+.deck-pile-card-back {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    border-radius: 0.375rem; /* 6px */
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1), 0 1px 2px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600; /* semibold */
+    user-select: none;
+    backface-visibility: hidden; /* 뒷면 숨김 (카드 뒤집기 효과 시 유용) */
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+}
+
+/* 기본 덱 카드 뒷면 색상 */
+.basic-deck-color {
+    background-color: #A7F3D0; /* emerald-200 */
+    border: 2px solid #34D399; /* emerald-400 */
+    color: #065F46; /* emerald-800 */
+}
+.basic-deck-color:hover { /* 호버 시 약간의 입체감 */
+    transform: translateY(-2px) rotateX(5deg) rotateY(-2deg);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+/* 고급 덱 카드 뒷면 색상 */
+.advanced-deck-color {
+    background-color: #FDE68A; /* amber-200 */
+    border: 2px solid #FBBF24; /* amber-400 */
+    color: #92400E; /* amber-800 */
+}
+.advanced-deck-color:hover {
+    transform: translateY(-2px) rotateX(5deg) rotateY(2deg);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.15), 0 2px 4px rgba(0,0,0,0.1);
+}
+
+
+/* 공개된 시장 카드 스타일 (ui-handlers.js에서 생성하는 .compound-card-ui에 적용) */
+.compound-card-ui {
+    /* width: 120px; 이미 인라인 스타일로 적용됨 */
+    /* height: 170px; 이미 인라인 스타일로 적용됨 */
+    /* font-size: 0.7rem; 이미 인라인 스타일로 적용됨 */
+    /* 기타 스타일은 index.html의 <style> 태그 또는 여기서 추가 */
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+}
+.compound-card-ui:hover {
+    transform: translateY(-4px) scale(1.03);
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); /* Tailwind shadow-xl */
+}
+
+/* 주기율표 셀 스타일 개선 (기존 스타일과 병합 또는 수정) */
+.periodic-table-grid {
+    display: grid;
+    grid-template-columns: repeat(18, minmax(30px, 1fr)); /* 최소 크기 줄임 */
+    grid-auto-rows: minmax(30px, auto); /* 행 높이 자동 조정 */
+    gap: 1px; /* 셀 간 간격 줄임 */
+}
+
+.element-cell {
+    /* 기존 스타일 유지 */
+    padding: 1px; /* 패딩 줄임 */
+    font-size: 0.6rem; /* 내부 폰트 크기 일괄 조정 */
+    min-height: 32px; /* 최소 높이 보장 */
+}
+.element-cell .atomic-number {
+    font-size: 0.5rem; /* 원자번호 폰트 크기 */
+    top: 1px;
+    left: 2px;
+}
+.element-cell .element-symbol {
+    font-size: 0.85rem; /* 원소기호 폰트 크기 */
+}
+
+/* 게임 메시지 스타일 (기존 스타일과 병합 또는 수정) */
+.game-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.75); /* 반투명 검정 */
+    color: white;
+    padding: 0.5rem 1rem; /* 8px 16px */
+    border-radius: 9999px; /* full */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    opacity: 0;
+    transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out;
+    font-size: 0.875rem; /* 14px */
+    pointer-events: none; /* 메시지 위로 클릭 통과 */
+}
+.game-message.visible {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0); /* 나타날 때 약간 위로 이동 */
+}
+
+/* 플레이어 카드 스타일 개선 */
+.player-card {
+    transition: box-shadow 0.2s ease-in-out;
+}
+.player-card.ring-2 { /* 현재 플레이어 강조 시 */
+    box-shadow: 0 0 0 2px #6366F1, 0 8px 15px rgba(0,0,0,0.1); /* Tailwind indigo-500 + 더 강한 그림자 */
+}
+
+/* 주사위 스타일 개선 */
+.dice {
+    border-width: 1px; /* 테두리 두께 */
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+.dice.selected {
+    box-shadow: 0 0 0 2px #3B82F6, 0 2px 4px rgba(0,0,0,0.1); /* Tailwind blue-500 */
+}
+.dice:hover:not(.locked) {
+    transform: scale(1.08);
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}

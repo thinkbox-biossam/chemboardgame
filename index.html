@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>멘델레예프 다이스 - v2.4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../css/styles.css">
+    </head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto px-2 sm:px-4 py-6 max-w-7xl">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl sm:text-4xl font-bold text-indigo-800">멘델레예프 다이스</h1>
+            <p class="text-gray-600 mt-1 text-sm sm:text-base">원소 주기율표를 활용한 전략 주사위 게임</p>
+            <div class="flex justify-center gap-3 sm:gap-4 mt-3">
+                <button id="rules-btn" class="text-sm sm:text-base text-indigo-600 font-medium hover:text-indigo-800 transition">
+                    규칙 보기
+                </button>
+                <button id="reset-btn" class="text-sm sm:text-base text-red-600 font-medium hover:text-red-800 transition">
+                    게임 재시작
+                </button>
+            </div>
+        </header>
+
+        <div id="player-setup" class="bg-white rounded-lg shadow-xl p-6 sm:p-8 max-w-md mx-auto mt-8 text-center">
+            <h2 class="text-xl sm:text-2xl font-bold text-indigo-700 mb-5">플레이어 수 선택</h2>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+                <button class="player-count-btn bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-3 rounded-lg transition text-sm sm:text-base" data-count="2">2인</button>
+                <button class="player-count-btn bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-3 rounded-lg transition text-sm sm:text-base" data-count="3">3인</button>
+                <button class="player-count-btn bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-3 rounded-lg transition text-sm sm:text-base" data-count="4">4인</button>
+                <button class="player-count-btn bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-3 rounded-lg transition text-sm sm:text-base" data-count="5">5인</button>
+                <button class="player-count-btn bg-indigo-500 hover:bg-indigo-600 text-white py-2.5 px-3 rounded-lg transition text-sm sm:text-base" data-count="6">6인</button>
+            </div>
+            <p class="text-xs text-gray-500">규칙서 v2.4 기준</p>
+        </div>
+
+        <div id="gameboard" class="hidden">
+            <div class="game-info flex flex-col sm:flex-row justify-between items-center mb-4 bg-white rounded-lg shadow p-3 text-sm">
+                <div class="flex gap-3 sm:gap-4">
+                    <div id="round-counter" class="font-semibold">라운드: 1</div>
+                    <div id="phase-display" class="font-semibold">단계: 생산</div>
+                </div>
+                <div class="calculated-value-display mt-2 sm:mt-0">
+                    선택/계산된 원자번호: <span id="calculated-value" class="font-bold text-xl text-indigo-600">-</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
+                <div class="lg:col-span-7 xl:col-span-8">
+                    <div class="bg-white rounded-lg shadow-md p-3 sm:p-4 mb-4">
+                        <h2 class="text-lg sm:text-xl font-semibold text-indigo-700 mb-2">주기율표</h2>
+                        <div id="periodic-table" class="periodic-table-container"></div>
+                    </div>
+
+                    <div id="dice-operations" class="mb-4 p-3 sm:p-4 bg-indigo-50 rounded-lg shadow-inner">
+                        <div class="flex flex-col sm:flex-row items-center justify-between mb-3">
+                            <button id="roll-dice-btn" class="w-full sm:w-auto px-4 py-2 bg-indigo-600 text-white font-semibold rounded-lg shadow hover:bg-indigo-700 mb-2 sm:mb-0 text-sm">
+                                주사위 굴리기
+                            </button>
+                            <div class="text-xs text-gray-600">선택된 주사위: <span id="selected-dice-value" class="font-semibold">-</span></div>
+                        </div>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 text-xs">
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="single">단일 값</button>
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="add">덧셈 (+)</button>
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="subtract">뺄셈 (-)</button>
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="multiply">곱셈 (×)</button>
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="divide">나눗셈 (÷)</button>
+                            <button class="operation-btn py-1.5 px-2 bg-white border border-gray-300 rounded" data-operation="concat">자리붙이기</button>
+                            <button id="end-turn-btn" class="py-1.5 px-2 bg-green-500 hover:bg-green-600 text-white font-semibold rounded">생산 종료</button>
+                            <button id="skip-selling-btn" class="py-1.5 px-2 bg-gray-400 hover:bg-gray-500 text-white font-semibold rounded">판매 넘기기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-5 xl:col-span-4">
+                    <div id="player-containers" class="space-y-3">
+                        {/* 플레이어 컨테이너 동적 생성 */}
+                    </div>
+                </div>
+            </div>
+
+            <div id="market-area" class="mt-4 bg-white rounded-lg shadow-md p-3 sm:p-4">
+                <h2 class="text-lg sm:text-xl font-semibold text-indigo-700 mb-4 text-center">화합물 카드 시장</h2>
+                <div class="deck-and-top-card-section grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 pb-4 border-b border-gray-200">
+                    <div id="basic-deck-area" class="p-3 rounded-md bg-green-50 shadow-sm">
+                        {/* 기본 덱 + 상단 카드 UI */}
+                    </div>
+                    <div id="advanced-deck-area" class="p-3 rounded-md bg-yellow-50 shadow-sm">
+                        {/* 고급 덱 + 상단 카드 UI */}
+                    </div>
+                </div>
+                <div class="open-market-section">
+                    <div>
+                        <h3 class="text-md font-semibold text-green-700 mb-2">공개 시장 - 기본 카드</h3>
+                        <div id="basic-market-cards" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2 mb-4">
+                            {/* 시장 기본 카드 UI */}
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-md font-semibold text-yellow-600 mb-2">공개 시장 - 고급 카드</h3>
+                        <div id="advanced-market-cards" class="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-2">
+                            {/* 시장 고급 카드 UI */}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <footer class="mt-8 text-center text-gray-500 text-xs sm:text-sm">
+            <p>© 2024 멘델레예프 다이스 - 규칙서 v2.4 기준</p>
+        </footer>
+    </div>
+
+    <div id="game-message" class="game-message fixed bottom-5 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white px-4 py-2 rounded-full shadow-lg text-sm opacity-0 transition-opacity duration-300"></div>
+
+    {/* 모달들 (기존과 동일) */}
+    <div id="dice-selection-modal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-md w-full">
+            <h3 class="text-xl font-bold text-indigo-700 mb-4">새 주사위 선택</h3>
+            <div class="grid grid-cols-3 gap-4 mb-4">
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d4"><span class="text-2xl">d4</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d6"><span class="text-2xl">d6</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d8"><span class="text-2xl">d8</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d10"><span class="text-2xl">d10</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d12"><span class="text-2xl">d12</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition" data-dice="d20"><span class="text-2xl">d20</span></button>
+                <button class="dice-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition col-span-3" data-dice="d100"><span class="text-2xl">d%</span></button>
+            </div>
+            {/* 닫기 버튼 추가 고려 */}
+             <button id="close-dice-select-modal-btn" class="mt-2 text-sm text-gray-600 hover:text-gray-800">닫기</button>
+        </div>
+    </div>
+
+    <div id="skill-selection-modal" class="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 hidden">
+        <div class="bg-white rounded-lg p-6 max-w-lg w-full">
+            <h3 class="text-xl font-bold text-indigo-700 mb-4">기술 카드 선택</h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-4">
+                {/* data-skill 값은 SKILL_CARDS의 id 값과 일치해야 함 */}
+                <button class="skill-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition flex items-center text-left" data-skill="math">
+                    <span class="text-2xl mr-3">✶</span>
+                    <div><div class="font-bold">배수/나눗셈</div><div class="text-xs text-gray-600">+/- 대신 × 또는 ÷ 사용 가능</div></div>
+                </button>
+                <button class="skill-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition flex items-center text-left" data-skill="concat">
+                    <span class="text-2xl mr-3">⧖</span>
+                    <div><div class="font-bold">자리붙이기</div><div class="text-xs text-gray-600">두 눈을 붙여 2자리 수 생성</div></div>
+                </button>
+                <button class="skill-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition flex items-center text-left" data-skill="slide">
+                    <span class="text-2xl mr-3">↔</span>
+                    <div><div class="font-bold">슬라이드</div><div class="text-xs text-gray-600">배치 후 내 큐브 1개 이동</div></div>
+                </button>
+                <button class="skill-select-btn p-4 bg-indigo-100 hover:bg-indigo-200 rounded-lg transition flex items-center text-left" data-skill="outsource">
+                    <span class="text-2xl mr-3">🄧</span>
+                    <div><div class="font-bold">외주 생산</div><div class="text-xs text-gray-600">원소 1개 상대 라인 대체</div></div>
+                </button>
+            </div>
+            {/* 닫기 버튼 추가 고려 */}
+            <button id="close-skill-select-modal-btn" class="mt-2 text-sm text-gray-600 hover:text-gray-800">닫기</button>
+        </div>
+    </div>
+
+    <div id="compound-card-modal" class="fixed inset-0 flex items-center justify-center z-[80] bg-black bg-opacity-60 hidden p-4">
+        <div class="bg-white rounded-xl p-5 sm:p-6 max-w-md w-full shadow-xl transform transition-all">
+            <div class="flex justify-between items-center mb-3">
+                <h3 id="compound-card-title" class="text-lg sm:text-xl font-bold text-indigo-700">카드 제목</h3>
+                <button id="close-compound-card-modal-btn" class="text-gray-400 hover:text-gray-600"> <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+            </div>
+            <div class="compound-card-body text-sm">
+                <div class="mb-3">
+                    <div id="compound-card-formula" class="text-md font-mono text-center mb-1 text-gray-700">화학식</div>
+                    <div id="compound-card-description" class="text-gray-600 text-xs sm:text-sm bg-gray-50 p-2 rounded-md">설명</div>
+                </div>
+                <div class="mb-3">
+                    <h4 class="font-medium text-xs sm:text-sm mb-1 text-gray-700">필요 원소:</h4>
+                    <div id="compound-card-elements" class="flex flex-wrap gap-1 p-1 bg-gray-50 rounded-md min-h-[30px]"></div>
+                </div>
+                <div class="flex justify-between items-center mt-4">
+                    <div class="text-md font-bold text-indigo-700">점수: <span id="compound-card-points">0</span>점</div>
+                    <button id="purchase-compound-card-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md transition text-sm"> 카드 구매
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="message-box-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-[60] hidden"></div>
+    <div id="message-box-container" class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-white rounded-lg p-6 max-w-sm w-11/12 shadow-xl z-[70] hidden">
+        <p id="message-box-text" class="text-sm sm:text-base text-center"></p>
+        <div class="flex justify-center mt-5">
+            <button id="message-box-ok-btn" class="bg-indigo-500 hover:bg-indigo-600 text-white font-bold py-2 px-4 rounded-md transition text-sm"> 확인
+            </button>
+        </div>
+    </div>
+
+    <script type="module" src="../js/main.js"></script>
+</body>
+</html>
